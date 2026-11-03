@@ -237,7 +237,7 @@ const sc=e=>'var(--s-'+e+')';
 function chip(e){return '<span class="chip"><span class="dot" style="--c:'+sc(e)+'"></span>'+EL[e]+'</span>'}
 
 /* ---------- estado de UI ---------- */
-const S={tab:'locales',vista:'lista',q:'',fRubro:'',fEstado:'',orden:'dist',
+const S={tab:'locales',vista:'mapa',verFiltros:false,q:'',fRubro:'',fEstado:'',orden:'dist',
   sheet:null,sheetPl:'',sheetMsg:'',nota:'',edit:null,confirm:null,
   editPl:null,plNombre:'',plTexto:'',
   camp:{pl:'',rubro:'',estado:'nuevo',km:'',cola:null,i:0,msg:''},
@@ -266,12 +266,14 @@ function vLocales(){
   if(!all.length)return S.vista==='mapa'?'<div class="row" style="justify-content:space-between"><span class="small muted">Tocá cualquier punto del mapa para ver la dirección y agregar un local.</span><button class="btn" data-act="vista" data-v="lista">Volver</button></div>':emptyLocales();
   const ls=filtrados();
   const rs=rubros();
-  let h='<div class="sec"><input type="search" id="q" data-model="q" data-live placeholder="Buscar nombre, dirección, rubro o teléfono" value="'+esc(S.q)+'">'+
+  const showF=S.vista!=='mapa'||S.verFiltros,nf=(S.q?1:0)+(S.fRubro?1:0)+(S.fEstado?1:0);
+  let h='<div class="sec">'+(showF?'<input type="search" id="q" data-model="q" data-live placeholder="Buscar nombre, dirección, rubro o teléfono" value="'+esc(S.q)+'">'+
    '<div class="filters">'+
    '<select id="fRubro" data-model="fRubro" data-render><option value="">Todos los rubros</option>'+rs.map(r=>'<option'+(r===S.fRubro?' selected':'')+'>'+esc(r)+'</option>').join('')+'</select>'+
    '<select id="fEstado" data-model="fEstado" data-render><option value="">Todos los estados</option>'+ESTADOS.map(([k,v])=>'<option value="'+k+'"'+(k===S.fEstado?' selected':'')+'>'+v+'</option>').join('')+'</select>'+
    '<select id="orden" class="wide" data-model="orden" data-render><option value="dist"'+(S.orden==='dist'?' selected':'')+'>Más cerca primero</option><option value="nombre"'+(S.orden==='nombre'?' selected':'')+'>Por nombre</option><option value="rec"'+(S.orden==='rec'?' selected':'')+'>Actividad reciente</option></select>'+
-   '</div><div class="row" style="justify-content:space-between"><span class="small muted mono">'+ls.length+' de '+all.length+' locales</span>'+
+   '</div>':'')+'<div class="row" style="justify-content:space-between"><span class="small muted mono">'+ls.length+' de '+all.length+' locales</span>'+
+   (S.vista==='mapa'?'<button class="btn" data-act="verF" style="min-height:34px;padding:5px 12px">'+(S.verFiltros?'Ocultar filtros':'Filtros'+(nf?' ('+nf+')':''))+'</button>':'')+
    '<div class="seg" role="group" aria-label="Vista"><button data-act="vista" data-v="lista" aria-pressed="'+(S.vista==='lista')+'">Lista</button><button data-act="vista" data-v="mapa" aria-pressed="'+(S.vista==='mapa')+'">Mapa</button></div></div></div>';
   if(S.vista!=='mapa')h+=ls.length?'<div class="list">'+ls.map(itemRow).join('')+'</div>':'<p class="muted">Ningún local coincide con el filtro.</p>';
   return h;
@@ -564,6 +566,7 @@ document.addEventListener('click',ev=>{
   switch(a){
    case 'tab':S.tab=el.dataset.t;S.sheet=null;render();$('#view').scrollTop=0;break;
    case 'vista':S.vista=el.dataset.v;render();break;
+   case 'verF':S.verFiltros=!S.verFiltros;render();break;
    case 'open':openSheet(id);break;
    case 'close':S.sheet=null;render();break;
    case 'goFiltro':S.tab='locales';S.fEstado=el.dataset.e;S.vista='lista';render();break;
