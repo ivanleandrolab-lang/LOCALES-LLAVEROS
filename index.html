@@ -465,7 +465,7 @@ const ESRI_A='Imágenes &copy; <a href="https://www.esri.com" target="_blank" re
 const esri=(s,o)=>L.tileLayer(ESRI+s+'/MapServer/tile/{z}/{y}/{x}',Object.assign({maxZoom:20,maxNativeZoom:18},o));
 const CAPAS={
   calles:{n:'Calles',mk:()=>L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:20,maxNativeZoom:19,className:'tl-invert',attribution:OSM_A}),pv:(z,x,y)=>'https://tile.openstreetmap.org/'+z+'/'+x+'/'+y+'.png'},
-  sencillo:{n:'Sencillo',mk:()=>L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,className:'tl-invert',attribution:OSM_A+' &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'}),pv:(z,x,y)=>'https://a.basemaps.cartocdn.com/rastertiles/voyager/'+z+'/'+x+'/'+y+'.png'},
+  sencillo:{n:'Sencillo',mk:()=>esri('World_Street_Map',{maxNativeZoom:19,className:'tl-invert',attribution:'&copy; <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, HERE, Garmin, OpenStreetMap'}),pv:(z,x,y)=>ESRI+'World_Street_Map/MapServer/tile/'+z+'/'+y+'/'+x},
   satelite:{n:'Satélite',mk:()=>esri('World_Imagery',{attribution:ESRI_A}),pv:(z,x,y)=>ESRI+'World_Imagery/MapServer/tile/'+z+'/'+y+'/'+x},
   hibrido:{n:'Híbrido',mk:()=>L.layerGroup([esri('World_Imagery',{attribution:ESRI_A}),esri('Reference/World_Transportation'),esri('Reference/World_Boundaries_and_Places')]),pv:(z,x,y)=>ESRI+'World_Imagery/MapServer/tile/'+z+'/'+y+'/'+x}
 };
